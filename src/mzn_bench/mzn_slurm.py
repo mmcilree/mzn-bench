@@ -186,7 +186,7 @@ def schedule(
 
 
 async def run_instance(
-    problem, model, data, config, timeout, stat_base, sol_file, stats_file
+    problem, model, data, config, timeout, stat_base, sol_file, stats_file, proof_file
 ):
     statistics = stat_base.copy()
     start = time.perf_counter()
@@ -195,6 +195,10 @@ async def run_instance(
         if config.minizinc is not None:
             assert config.minizinc.exists()
             driver = minizinc.Driver(config.minizinc)
+        
+        if "--prove" in config.other_flags.keys():
+            config.other_flags["--prove"] = proof_file
+
         model = minizinc.Model(model)
         model.output_type = dict
         instance = minizinc.Instance(config.solver, model, driver)
@@ -204,7 +208,7 @@ async def run_instance(
 
         for key, value in config.extra_data.items():
             instance[key] = value
-
+ 
         with sol_file.open(mode="w") as file:
             async for result in instance.solutions(
                 timeout=timeout,
@@ -318,6 +322,7 @@ def main(instances, output_dir):
                 stat_base,
                 output_dir / f"{filename}_sol.yml",
                 output_dir / f"{filename}_stats.yml",
+                output_dir / f"{filename}.pbp",
             )
         )
     except Exception:
