@@ -29,7 +29,7 @@ except ImportError:
 
 @click.group()
 def main():
-    """Command-line tool for minizinc-slurm."""
+    """Command-line tool for minizinc-slurm. (Modified by Matthew for Proof Logging Benchmarking)"""
     pass
 
 
