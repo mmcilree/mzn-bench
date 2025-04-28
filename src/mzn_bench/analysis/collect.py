@@ -72,8 +72,15 @@ def collect_statistics(
                 if filter_stats is not None:
                     stats = {k: stats[k] for k in base_keys + filter_stats}
                 stats["run"] = path.name
-                yield stats
-
+                
+            proof_file = file.with_name(file.name.replace("_stats.yml", ".pbp"))
+            if proof_file.exists(): 
+                size_mb = proof_file.stat().st_size >> 20
+                stats["proof_size"] = size_mb
+            else:
+                stats["proof_size"] = None
+            
+            yield stats
 
 def read_csv(sols: str, stats: str):
     import pandas as pd
