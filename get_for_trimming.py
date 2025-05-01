@@ -7,9 +7,10 @@ import numpy as np
 
 _, stats = read_csv("dummy.csv", "statistics.csv")
 
-stats = stats[stats['status'] != "ERROR"]
+stats = stats[stats['status'].isin(["OPTIMAL SOLUTION", "SATISFIABLE", "UNSATISFIABLE"])]
 stats = stats[stats.configuration.eq("Huub_Proof")]
-stats = stats[stats.time < 250]
+stats = stats[stats.time < 290]
 stats = stats[["problem", "model", "data_file"]]
 
+print(f"Found {len(stats)} instances")
 stats.to_csv("instances_for_trimming.csv", index=False)
